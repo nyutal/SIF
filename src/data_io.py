@@ -11,6 +11,11 @@ def getWordmap(textfile):
     f = open(textfile,'r')
     lines = f.readlines()
     for (n,i) in enumerate(lines):
+
+        #debug
+        if n % 1000 == 0:
+            print('debug getWordmap sentence #%s' %(n))
+
         i=i.split()
         j = 1
         v = []
