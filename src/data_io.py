@@ -2,29 +2,25 @@ from __future__ import print_function
 import numpy as np
 import pickle
 from tree import tree
-from theano import config
+#from theano import config
 
 
 def getWordmap(textfile):
-    words={}
+    words = {}
     We = []
-    f = open(textfile,'r')
-    lines = f.readlines()
-    for (n,i) in enumerate(lines):
-
-        #debug
-        if n % 1000 == 0:
-            print('debug getWordmap sentence #%s' %(n))
-
-        i=i.split()
+    n = 1
+    f = open(textfile, 'r', encoding="utf8")
+    for i in f.readlines():
+        i = i.split()
         j = 1
         v = []
         while j < len(i):
             v.append(float(i[j]))
             j += 1
-        words[i[0]]=n
+        words[i[0]] = n
         We.append(v)
-    return (words, np.array(We))
+        n += 1
+    return words, np.array(We)
 
 
 def prepare_data(list_of_seqs):
@@ -290,25 +286,24 @@ def getWordWeight(weightfile, a=1e-3):
 
     word2weight = {}
     with open(weightfile) as f:
-        lines = f.readlines()
-    N = 0
-    for i in lines:
-        i = i.strip()
-        if len(i) > 0:
-            i = i.split()
-            if len(i) == 2:
-                word2weight[i[0]] = float(i[1])
-                N += float(i[1])
-            else:
-                print(i)
-    for key, value in word2weight.iteritems():
+        N = 0
+        for i in f.readlines():
+            i = i.strip()
+            if len(i) > 0:
+                i = i.split()
+                if len(i) == 2:
+                    word2weight[i[0]] = float(i[1])
+                    N += float(i[1])
+                else:
+                    print(i)
+    for key, value in word2weight.items():
         word2weight[key] = a / (a + value/N)
     return word2weight
 
 
 def getWeight(words, word2weight):
     weight4ind = {}
-    for word, ind in words.iteritems():
+    for word, ind in words.items():
         if word in word2weight:
             weight4ind[ind] = word2weight[word]
         else:

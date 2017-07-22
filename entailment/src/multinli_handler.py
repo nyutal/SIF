@@ -44,7 +44,7 @@ class MultiNliHandler(object):
         return label_vector
 
     def get_all_senteces(self, multi_nli_file, words):
-        f = open(multi_nli_file, 'r')
+        f = open(multi_nli_file, 'r', encoding="utf8")
         f.readline()  # skip header
 
         seq1 = []
@@ -53,7 +53,7 @@ class MultiNliHandler(object):
             sline = line.split('\t')
             line_dict = {self.headers_i2n[i]: val for i, val in enumerate(sline)}
             if self.to_ignore(line_dict):
-                print 'dropped line ' + line_dict
+                print('dropped line ' + line_dict)
                 continue
 
             sentence1 = line_dict['sentence1']
@@ -84,7 +84,7 @@ class MultiNliHandler(object):
             sline = line.split('\t')
             line_dict = {self.headers_i2n[i]: val for i, val in enumerate(sline)}
             if self.to_ignore(line_dict):
-                print 'dropped line ' + line_dict
+                print('dropped line ' + line_dict)
                 continue
 
             gold_label = self.get_label_vector(line_dict['gold_label'])
