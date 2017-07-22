@@ -1,7 +1,9 @@
 import sys
+import os
 sys.path.append('../../src')
 import data_io as dio
 import multinli_handler as mnh
+import sif_word_embedding as swe
 
 
 multi_nli_file = '../data/multinli_0.9/multinli_0.9_train.txt'
@@ -26,5 +28,8 @@ x, m = mlh.get_all_senteces(multi_nli_file, words)
 params = params.params()
 params.rmpc = rmpc
 
+sif_words = swe.sif_word_embedding(We, x, w, params)
+
+swe.write_word_embedding('./data/sif_embedding_' + os.path.split(wordfile)[1])
 
 
