@@ -53,3 +53,9 @@ def sif_word_embedding(We, x, w, params):
         pc = compute_pc(emb)
         We = remove_pc(We, pc)
     return We
+
+
+def write_word_embedding(fname, We):
+    with open(fname, 'w') as f:
+        for k,v in We:
+            f.write(k + ' ' + ' '.join(v))
