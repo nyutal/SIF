@@ -1,15 +1,61 @@
-import sys
-sys.path.append('../../src')
-import data_io as dio
-import multinli_handler as mnh
+import numpy as np
+from sklearn.decomposition import TruncatedSVD
 
-multi_nli_file = '../data/multinli_0.9/multinli_0.9_train.txt'
-wordfile = '../../data/glove.840B.300d.txt' # word vector file, can be downloaded from GloVe website
-weightfile = '../../auxiliary_data/enwiki_vocab_min200.txt' # each line is a word and its frequency
-weightpara = 1e-3 # the parameter in the SIF weighting scheme, usually in the range [3e-5, 3e-3]
 
-# load word vectors
-(words, We) = dio.getWordmap(wordfile)
+def get_weighted_average(We, x, w):
+    """
+    Compute the weighted average vectors
+    :param We: We[i,:] is the vector for word i
+    :param x: x[i, :] are the indices of the words in sentence i
+    :param w: w[i, :] are the weights for the words in sentence i
+    :return: emb[i, :] are the weighted average vector for sentence i
+    """
+    n_samples = x.shape[0]
+    emb = np.zeros((n_samples, We.shape[1]))
+    for i in xrange(n_samples):
+        emb[i,:] = w[i,:].dot(We[x[i,:],:]) / np.count_nonzero(w[i,:])
+    return emb
 
-mlh = mnh.MultiNliHandler()
-mlh.parse_train_data(multi_nli_file, words)
+def compute_pc(X,npc=1):
+    """
+    Compute the principal components
+    :param X: X[i,:] is a data point
+    :param npc: number of principal components to remove
+    :return: component_[i,:] is the i-th pc
+    """
+    svd = TruncatedSVD(n_components=npc, n_iter=7, random_state=0)
+    svd.fit(X)
+    return svd.components_
+
+def remove_pc(X, pc):
+    """
+    Remove the projection on the principal components
+    :param X: X[i,:] is a data point
+    :param npc: number of principal components to remove
+    :return: XX[i, :] is the data point after removing its projection
+    """
+    #REMOVED pc = compute_pc(X, npc)
+    XX = X - X.dot(pc.transpose()) * pc
+    return XX
+
+
+def sif_word_embedding(We, x, w, params):
+    """
+    Compute the scores between pairs of sentences using weighted average + removing the projection on the first principal component
+    :param We: We[i,:] is the vector for word i
+    :param x: x[i, :] are the indices of the words in the i-th sentence
+    :param w: w[i, :] are the weights for the words in the i-th sentence
+    :param params.rmpc: if >0, remove the projections of the sentence embeddings to their first principal component
+    :return: emb, emb[i, :] is the embedding for sentence i
+    """
+    if params.rmpc > 0:
+        emb = get_weighted_average(We, x, w)
+        pc = compute_pc(emb)
+        We = remove_pc(We, pc)
+    return We
+
+
+def write_word_embedding(fname, We):
+    with open(fname, 'w') as f:
+        for k,v in We:
+            f.write(k + ' ' + ' '.join(v))

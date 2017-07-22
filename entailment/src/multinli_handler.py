@@ -43,9 +43,32 @@ class MultiNliHandler(object):
         label_vector[self.label_idxs[label]] = 1.0
         return label_vector
 
+    def get_all_senteces(self, multi_nli_file, words):
+        f = open(multi_nli_file, 'r')
+        f.readline()  # skip header
+
+        seq1 = []
+
+        for line in f.readlines():
+            sline = line.split('\t')
+            line_dict = {self.headers_i2n[i]: val for i, val in enumerate(sline)}
+            if self.to_ignore(line_dict):
+                print 'dropped line ' + line_dict
+                continue
+
+            sentence1 = line_dict['sentence1']
+            sentence2 = line_dict['sentence2']
+
+            s1_seq, s2_seq = dio.getSeqs(sentence1, sentence2, words)
+            seq1.append(s1_seq)
+            seq1.append(s2_seq)
+
+        x, m = dio.prepare_data(seq1)
+        return x, m
+
     def parse_train_data(self, multi_nli_file, words):
         """
-        read multinli txt fil, output array of words indices that can be fed into the alg.
+        read multinli txt file, output array of words indices that can be fed into the alg.
         :param multi_nli_file: path to the txt file (not JSON!!!)
         :return:
         """
@@ -75,7 +98,7 @@ class MultiNliHandler(object):
 
         x1,m1 = dio.prepare_data(seq1)
         x2,m2 = dio.prepare_data(seq2)
-        label_vectors =  np.stack(golds)
-        return x1, m1, x2, m2, label_vectors
+        # label_vectors =  np.stack(golds)
+        return x1, m1, x2, m2, golds
             # print line_dict
             # break
