@@ -5,7 +5,12 @@ right now, all our new content reside under entailment...
 - run sif/entailment/download.sh to download multinli and snli.
 
 
-...
+
+
+
+
+# Original sif readme.md below
+... 
 
 
 This is the code for [the paper](https://openreview.net/forum?id=SyK00v5xx) "A Simple but Tough-to-Beat Baseline for Sentence Embeddings".
