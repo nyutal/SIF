@@ -4,6 +4,7 @@ sys.path.append('../../src')
 import data_io as dio
 import multinli_handler as mnh
 import sif_word_embedding as swe
+import params
 
 
 multi_nli_file = '../data/multinli_0.9/multinli_0.9_train.txt'
@@ -21,14 +22,17 @@ weight4ind = dio.getWeight(words, word2weight) # weight4ind[i] is the weight for
 mlh = mnh.MultiNliHandler()
 
 x, m = mlh.get_all_senteces(multi_nli_file, words)
+w = dio.seq2weight(x, m, weight4ind) # get word weights
 #x1, m1, x2, m2, golds = mlh.parse_train_data(multi_nli_file, words)
 
 # parameters
 params = params.params()
-params.rmpc = rmpc
+params.rmpc = 1
+
 
 sif_words = swe.sif_word_embedding(We, x, w, params)
 
-swe.write_word_embedding('./data/sif_embedding_' + os.path.split(wordfile)[1])
+
+swe.write_word_embedding('./data/sif_embedding_' + os.path.split(wordfile)[1], sif_words)
 
 

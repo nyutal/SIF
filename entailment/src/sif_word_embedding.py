@@ -56,6 +56,6 @@ def sif_word_embedding(We, x, w, params):
 
 
 def write_word_embedding(fname, We):
-    with open(fname, 'w') as f:
-        for k,v in We:
-            f.write(k + ' ' + ' '.join(v))
+    f = open(fname, 'w')
+    for k,v in We:
+        f.write(k + ' ' + ' '.join(v))
