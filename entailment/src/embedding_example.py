@@ -17,7 +17,6 @@ print('hello')
 (words, We) = dio.getWordmap(wordfile) # We = 300d vectors
 
 print('hello2')
-=======
 word2weight = dio.getWordWeight(weightfile, weightparam) # word2weight['str'] is the weight for the word 'str'
 weight4ind = dio.getWeight(words, word2weight) # weight4ind[i] is the weight for the i-th word
 
