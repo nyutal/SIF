@@ -8,9 +8,8 @@ from tree import tree
 def getWordmap(textfile):
     words = {}
     We = []
-    n = 1
     f = open(textfile, 'r', encoding="utf8")
-    for i in f.readlines():
+    for (n,i) in enumerate(f.readlines()):
         i = i.split()
         j = 1
         v = []
@@ -19,7 +18,6 @@ def getWordmap(textfile):
             j += 1
         words[i[0]] = n
         We.append(v)
-        n += 1
     return words, np.array(We)
 
 
